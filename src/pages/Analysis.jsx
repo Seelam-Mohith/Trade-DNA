@@ -8,6 +8,7 @@ import {
   FiChevronDown,
 } from 'react-icons/fi'
 import { getStocks, getAnalysisWatchlist } from '../services/api.js'
+import { formatPrice } from '../utils/format.js'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import ChangePill from '../components/ui/ChangePill.jsx'
 import RatingBadge from '../components/ui/RatingBadge.jsx'
@@ -27,6 +28,47 @@ function SignalBar({ label, value, color }) {
           style={{ width: `${value}%`, backgroundColor: color }}
         />
       </div>
+    </div>
+  )
+}
+
+function WatchlistSection({ title, items, activeSymbol, onSelect }) {
+  return (
+    <div className="mb-4 last:mb-0">
+      <h3 className="mb-2 flex items-center justify-between px-1 text-xs font-semibold uppercase tracking-wider text-fog">
+        {title}
+        <span className="rounded-full bg-ink-700 px-2 py-0.5 font-mono text-[10px] text-slate-300">
+          {items.length}
+        </span>
+      </h3>
+      <ul className="flex flex-col gap-1">
+        {items.map((w) => (
+          <li key={w.symbol}>
+            <button
+              type="button"
+              onClick={() => onSelect(w.symbol)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors ${
+                activeSymbol === w.symbol
+                  ? 'bg-ink-800 text-gold'
+                  : 'text-slate-400 hover:bg-ink-800 hover:text-slate-100'
+              }`}
+            >
+              <span>
+                <span className="block font-semibold">{w.symbol}</span>
+                <span className="block text-xs text-fog">{w.name}</span>
+              </span>
+              <span
+                className={`font-mono text-sm ${
+                  w.changePct >= 0 ? 'text-bull' : 'text-bear'
+                }`}
+              >
+                {w.changePct >= 0 ? '+' : ''}
+                {w.changePct.toFixed(2)}%
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -65,13 +107,15 @@ export default function Analysis() {
   if (loading || !active) return <Loader />
 
   const { signals } = active
+  const indianStocks = watchlist.filter((w) => w.region === 'indian')
+  const internationalStocks = watchlist.filter((w) => w.region !== 'indian')
 
   return (
     <div>
       <PageHeader
         eyebrow="analysis"
         title="Stock Analysis"
-        subtitle="Deep-dive the DNA score behind every recommendation — signal by signal."
+        subtitle="Deep-dive the DNA score behind every recommendation — signal by signal. Track Indian and international markets side by side."
       />
 
       <section className="grid gap-4 lg:grid-cols-4">
@@ -79,34 +123,18 @@ export default function Analysis() {
           <h2 className="mb-3 px-1 text-sm font-semibold uppercase tracking-wider text-fog">
             Watchlist
           </h2>
-          <ul className="flex flex-col gap-1">
-            {watchlist.map((w) => (
-              <li key={w.symbol}>
-                <button
-                  type="button"
-                  onClick={() => select(w.symbol)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors ${
-                    active.symbol === w.symbol
-                      ? 'bg-ink-800 text-gold'
-                      : 'text-slate-400 hover:bg-ink-800 hover:text-slate-100'
-                  }`}
-                >
-                  <span>
-                    <span className="block font-semibold">{w.symbol}</span>
-                    <span className="block text-xs text-fog">{w.name}</span>
-                  </span>
-                  <span
-                    className={`font-mono text-sm ${
-                      w.changePct >= 0 ? 'text-bull' : 'text-bear'
-                    }`}
-                  >
-                    {w.changePct >= 0 ? '+' : ''}
-                    {w.changePct.toFixed(2)}%
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <WatchlistSection
+            title="Indian Stocks"
+            items={indianStocks}
+            activeSymbol={active.symbol}
+            onSelect={select}
+          />
+          <WatchlistSection
+            title="International Stocks"
+            items={internationalStocks}
+            activeSymbol={active.symbol}
+            onSelect={select}
+          />
         </div>
 
         <div className="card flex flex-col gap-5 p-5 lg:col-span-3">
@@ -118,10 +146,13 @@ export default function Analysis() {
                 <span className="chip bg-ink-700 text-slate-300">
                   {active.sector}
                 </span>
+                <span className="chip bg-gold/10 text-gold ring-1 ring-inset ring-gold/30">
+                  {active.currency === 'INR' ? 'Indian Market' : 'International'}
+                </span>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-4">
                 <p className="font-mono text-3xl font-bold text-white">
-                  ${active.price.toFixed(2)}
+                  {formatPrice(active.price, active.currency)}
                 </p>
                 <ChangePill value={active.changePct} />
               </div>
@@ -150,9 +181,9 @@ export default function Analysis() {
               </span>
             </div>
             <div className="hidden items-center gap-2 text-xs text-fog sm:flex">
-              <span className="text-bull">▼ {active.targets.low}</span>
-              <span>Consensus ${active.targets.consensus}</span>
-              <span className="text-bull">▲ {active.targets.high}</span>
+              <span className="text-bull">▼ {formatPrice(active.targets.low, active.currency)}</span>
+              <span>Consensus {formatPrice(active.targets.consensus, active.currency)}</span>
+              <span className="text-bull">▲ {formatPrice(active.targets.high, active.currency)}</span>
             </div>
           </div>
 
@@ -223,11 +254,11 @@ export default function Analysis() {
                 />
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-mist">Low ${active.targets.low}</span>
+                <span className="text-mist">Low {formatPrice(active.targets.low, active.currency)}</span>
                 <span className="font-semibold text-gold">
-                  Consensus ${active.targets.consensus}
+                  Consensus {formatPrice(active.targets.consensus, active.currency)}
                 </span>
-                <span className="text-mist">High ${active.targets.high}</span>
+                <span className="text-mist">High {formatPrice(active.targets.high, active.currency)}</span>
               </div>
             </div>
           </div>
