@@ -8,6 +8,7 @@ import {
   FiActivity,
 } from 'react-icons/fi'
 import { mockStocks, marketIndex, aiInsights } from '../data/mockData.js'
+import { formatPrice } from '../utils/format.js'
 import ChangePill from '../components/ui/ChangePill.jsx'
 import RatingBadge from '../components/ui/RatingBadge.jsx'
 import { Sparkline, TrendLine } from '../components/ui/Charts.jsx'
@@ -149,7 +150,7 @@ export default function Home() {
               </div>
               <div className="mt-4 flex items-baseline justify-between">
                 <p className="font-mono text-xl font-bold text-white">
-                  ${s.price.toFixed(2)}
+                  {formatPrice(s.price, s.currency)}
                 </p>
                 <ChangePill value={s.changePct} />
               </div>

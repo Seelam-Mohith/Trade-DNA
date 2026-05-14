@@ -8,6 +8,7 @@ import {
   FiArrowRight,
 } from 'react-icons/fi'
 import { getPortfolio, getStocks } from '../services/api.js'
+import { formatPrice } from '../utils/format.js'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
 import ChangePill from '../components/ui/ChangePill.jsx'
@@ -152,7 +153,7 @@ export default function Dashboard() {
                     <p className="text-xs text-fog">{h.detail.name}</p>
                   </td>
                   <td className="py-3.5 pr-4 font-mono text-slate-300">
-                    ${h.price.toFixed(2)}
+                    {formatPrice(h.price, h.detail.currency)}
                   </td>
                   <td className="py-3.5 pr-4">
                     <ChangePill value={h.changePct} />

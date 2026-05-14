@@ -2,12 +2,28 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiSearch, FiArrowUpRight, FiChevronRight } from 'react-icons/fi'
 import { getRankings } from '../services/api.js'
+import { formatPrice } from '../utils/format.js'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import ChangePill from '../components/ui/ChangePill.jsx'
 import RatingBadge from '../components/ui/RatingBadge.jsx'
 import Loader from '../components/ui/Loader.jsx'
 
-const SECTORS = ['All', 'Semiconductors', 'Software', 'E-Commerce & Cloud', 'Financials', 'Automotive', 'Internet & Media', 'Energy', 'Consumer Electronics']
+const SECTORS = [
+  'All',
+  'Semiconductors',
+  'Software',
+  'E-Commerce & Cloud',
+  'Financials',
+  'Automotive',
+  'Internet & Media',
+  'Energy',
+  'Consumer Electronics',
+  'Oil & Gas',
+  'IT Services',
+  'Banking',
+  'Telecom',
+  'Consumer Goods',
+]
 
 export default function Rankings() {
   const [rankings, setRankings] = useState([])
@@ -117,7 +133,7 @@ export default function Rankings() {
                   </td>
                   <td className="px-4 py-4 text-xs text-mist">{s.sector}</td>
                   <td className="px-4 py-4 font-mono text-slate-300">
-                    ${s.price.toFixed(2)}
+                    {formatPrice(s.price, s.currency)}
                   </td>
                   <td className="px-4 py-4">
                     <ChangePill value={s.changePct} />
@@ -126,7 +142,7 @@ export default function Rankings() {
                     <RatingBadge rating={s.rating} />
                   </td>
                   <td className="px-4 py-4 font-mono text-slate-400">
-                    ${s.targets.consensus}
+                    {formatPrice(s.targets.consensus, s.currency)}
                   </td>
                   <td className="px-5 py-4 text-right">
                     <div className="flex items-center justify-end gap-2.5">
