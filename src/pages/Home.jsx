@@ -61,17 +61,17 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
-              to="/dashboard"
+              to="/rankings"
               className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-gold-bright px-6 py-3 text-sm font-semibold text-ink-950 transition-transform duration-200 hover:scale-[1.03]"
             >
-              Explore the Dashboard
+              View Rankings
               <FiArrowRight className="transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
-              to="/rankings"
+              to="/about"
               className="inline-flex items-center gap-2 rounded-lg border border-line px-6 py-3 text-sm font-semibold text-slate-300 transition-colors hover:border-gold/40 hover:text-gold"
             >
-              View Rankings
+              Learn More
             </Link>
           </div>
           <dl className="mt-10 grid max-w-md grid-cols-3 gap-4">

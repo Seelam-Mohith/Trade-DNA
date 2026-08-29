@@ -2,7 +2,6 @@ import axios from 'axios'
 import {
   mockStocks,
   marketIndex,
-  portfolio,
   rankings,
   aiInsights,
   analysisWatchlist,
@@ -40,11 +39,6 @@ export async function getStockById(id) {
 export async function getMarketIndex() {
   if (USE_MOCKS) return mockWrap(marketIndex)
   return client.get('/market/index')
-}
-
-export async function getPortfolio() {
-  if (USE_MOCKS) return mockWrap(portfolio)
-  return client.get('/portfolio')
 }
 
 export async function getRankings() {

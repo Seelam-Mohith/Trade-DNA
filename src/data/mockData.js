@@ -547,43 +547,6 @@ export const marketIndex = [
   { date: 'Dec', value: 6452 },
 ]
 
-export const portfolio = {
-  invested: 250000,
-  currentValue: 279450,
-  pnl: 29450,
-  pnlPct: 11.78,
-  allocation: [
-    { name: 'Technology', value: 42, color: '#22c55e' },
-    { name: 'Semiconductors', value: 18, color: '#f0b90b' },
-    { name: 'Financials', value: 14, color: '#3b82f6' },
-    { name: 'Energy', value: 8, color: '#f97316' },
-    { name: 'Consumer', value: 10, color: '#a78bfa' },
-    { name: 'Cash', value: 8, color: '#64748b' },
-  ],
-  performance: [
-    { date: 'Jan', portfolio: 250000, benchmark: 250000 },
-    { date: 'Feb', portfolio: 251800, benchmark: 251000 },
-    { date: 'Mar', portfolio: 248500, benchmark: 249500 },
-    { date: 'Apr', portfolio: 252900, benchmark: 250800 },
-    { date: 'May', portfolio: 259400, benchmark: 253500 },
-    { date: 'Jun', portfolio: 263100, benchmark: 255900 },
-    { date: 'Jul', portfolio: 260200, benchmark: 256400 },
-    { date: 'Aug', portfolio: 267800, benchmark: 258100 },
-    { date: 'Sep', portfolio: 271400, benchmark: 260300 },
-    { date: 'Oct', portfolio: 274900, benchmark: 262800 },
-    { date: 'Nov', portfolio: 276200, benchmark: 264100 },
-    { date: 'Dec', portfolio: 279450, benchmark: 266900 },
-  ],
-  watchlist: [
-    { symbol: 'NVDA', changePct: 1.21, rating: 'STRONG_BUY', price: 178.42 },
-    { symbol: 'AVGO', changePct: 2.22, rating: 'STRONG_BUY', price: 214.9 },
-    { symbol: 'GOOGL', changePct: 1.56, rating: 'STRONG_BUY', price: 192.65 },
-    { symbol: 'MSFT', changePct: 0.73, rating: 'BUY', price: 467.83 },
-    { symbol: 'AAPL', changePct: -0.44, rating: 'BUY', price: 242.16 },
-    { symbol: 'TSLA', changePct: 3.7, rating: 'HOLD', price: 348.71 },
-  ],
-}
-
 export const rankings = mockStocks
   .map((s) => ({
     id: s.id,

@@ -140,10 +140,10 @@ export default function About() {
             See Rankings <FiArrowRight />
           </Link>
           <Link
-            to="/dashboard"
+            to="/analysis"
             className="inline-flex items-center gap-2 rounded-lg border border-line px-6 py-3 text-sm font-semibold text-slate-300 transition-colors hover:border-gold/40 hover:text-gold"
           >
-            View Dashboard
+            Analyze Stocks
           </Link>
         </div>
       </section>
