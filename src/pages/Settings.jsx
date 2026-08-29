@@ -25,13 +25,15 @@ function Toggle({ checked, onChange }) {
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
-        checked ? 'bg-gold' : 'bg-ink-700'
+      className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${
+        checked ? 'bg-gold' : 'bg-ink-600'
       }`}
     >
       <span
-        className={`absolute top-0.5 size-5 rounded-full bg-ink-950 transition-transform duration-200 ${
-          checked ? 'translate-x-[22px]' : 'translate-x-0.5'
+        className={`absolute left-0.5 top-0.5 size-5 rounded-full shadow-md transition-all duration-200 ${
+          checked
+            ? 'translate-x-5 bg-ink-950'
+            : 'translate-x-0 bg-slate-300'
         }`}
       />
     </button>
