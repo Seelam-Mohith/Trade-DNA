@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx'
 import Analysis from './pages/Analysis.jsx'
 import Rankings from './pages/Rankings.jsx'
 import About from './pages/About.jsx'
+import Settings from './pages/Settings.jsx'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/analysis" element={<Analysis />} />
         <Route path="/rankings" element={<Rankings />} />
         <Route path="/about" element={<About />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Home />} />
       </Route>
     </Routes>

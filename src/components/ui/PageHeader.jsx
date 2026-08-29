@@ -1,4 +1,4 @@
-import { FiTrendingUp, FiAward, FiCpu, FiShield } from 'react-icons/fi'
+import { FiTrendingUp, FiAward, FiCpu, FiShield, FiSettings } from 'react-icons/fi'
 
 export default function PageHeader({ eyebrow, title, subtitle, badge }) {
   return (
@@ -11,6 +11,7 @@ export default function PageHeader({ eyebrow, title, subtitle, badge }) {
               {eyebrow === 'analysis' && <FiCpu />}
               {eyebrow === 'rankings' && <FiAward />}
               {eyebrow === 'about' && <FiShield />}
+              {eyebrow === 'settings' && <FiSettings />}
               {eyebrow}
             </p>
           )}
