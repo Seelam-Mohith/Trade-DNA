@@ -9,6 +9,7 @@ import {
   FiZap,
 } from 'react-icons/fi'
 import PageHeader from '../components/ui/PageHeader.jsx'
+import { CURRENCIES, convertAmount, formatPrice } from '../utils/format.js'
 
 const REFRESH_OPTIONS = [
   { value: '5m', label: 'Every 5 minutes' },
@@ -99,24 +100,33 @@ export default function Settings() {
           <SettingRow
             icon={FiGlobe}
             title="Default currency"
-            desc="How prices and targets are formatted across the app."
+            desc="How prices and targets are converted and formatted across the app."
             control={
-              <div className="flex rounded-lg border border-line bg-ink-800 p-0.5">
-                {['USD', 'INR'].map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setCurrency(c)}
-                    className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      currency === c
-                        ? 'bg-gold text-ink-950'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {c === 'USD' ? '$ USD' : '₹ INR'}
-                  </button>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="max-w-[190px] rounded-lg border border-line bg-ink-800 px-3 py-2 text-xs font-medium text-slate-200 outline-none focus:border-gold/50"
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} — {c.name}
+                  </option>
                 ))}
-              </div>
+              </select>
+            }
+          />
+          <SettingRow
+            icon={FiDollarSign}
+            title="Conversion rate"
+            desc={`$100.00 USD ≈ ${formatPrice(convertAmount(100, 'USD', currency))} (indicative, uses static rates)`}
+            control={
+              <button
+                type="button"
+                onClick={() => setCurrency('USD')}
+                className="rounded-lg border border-line px-3 py-2 text-xs font-semibold text-slate-400 transition-colors hover:border-gold/40 hover:text-gold"
+              >
+                Reset
+              </button>
             }
           />
           <SettingRow
