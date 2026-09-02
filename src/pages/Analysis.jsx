@@ -7,7 +7,7 @@ import {
   FiAlertTriangle,
   FiChevronDown,
 } from 'react-icons/fi'
-import { getStocks, getAnalysisWatchlist } from '../services/api.js'
+import { getStocks, getAnalysisWatchlist, getStockPrediction } from '../services/api.js'
 import { formatPrice } from '../utils/format.js'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import ChangePill from '../components/ui/ChangePill.jsx'
@@ -79,6 +79,8 @@ export default function Analysis() {
   const [watchlist, setWatchlist] = useState([])
   const [active, setActive] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [prediction, setPrediction] = useState(null)
 
   useEffect(() => {
     let alive = true
@@ -95,6 +97,23 @@ export default function Analysis() {
       alive = false
     }
   }, [])
+
+  useEffect(() => {
+    if (!active) return
+    let alive = true
+    setRefreshing(true)
+    getStockPrediction(active.symbol)
+      .then((p) => {
+        if (alive) setPrediction(p.data)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setRefreshing(false)
+      })
+    return () => {
+      alive = false
+    }
+  }, [active?.symbol])
 
   function select(symbol) {
     const found = stocks.find((x) => x.symbol === symbol)
@@ -158,13 +177,19 @@ export default function Analysis() {
               </div>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <RatingBadge rating={active.rating} size="md" />
+              <RatingBadge rating={prediction?.prediction || active.rating} size="md" />
               <span className="text-xs text-fog">
                 Confidence{' '}
                 <span className="font-bold text-gold">
-                  {(active.confidence * 100).toFixed(0)}%
+                  {((prediction?.confidence ?? active.confidence) * 100).toFixed(0)}%
                 </span>
               </span>
+              {refreshing && (
+                <span className="flex items-center gap-1.5 text-xs text-mist">
+                  <span className="size-2 animate-pulse rounded-full bg-gold" />
+                  Live prediction…
+                </span>
+              )}
             </div>
           </div>
 
