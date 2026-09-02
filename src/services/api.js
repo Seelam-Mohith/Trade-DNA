@@ -56,4 +56,30 @@ export async function getAnalysisWatchlist() {
   return client.get('/analysis/watchlist')
 }
 
+export async function getStockPrediction(symbol) {
+  if (USE_MOCKS) {
+    const stock = mockStocks.find((s) => s.symbol === symbol) || mockStocks[0]
+    return mockWrap({
+      symbol,
+      prediction: stock.rating,
+      confidence: stock.confidence,
+      score: stock.score,
+      signals: stock.signals,
+      probabilities: {
+        HOLD: stock.rating === 'HOLD' ? 0.6 : 0.25,
+        BUY: stock.rating === 'BUY' || stock.rating === 'STRONG_BUY' ? 0.75 : 0.3,
+        SELL: stock.rating === 'SELL' || stock.rating === 'STRONG_SELL' ? 0.7 : 0.15,
+      },
+      model: 'Mock',
+      fallback: true,
+    })
+  }
+  return client.get(`/predict/${symbol}`)
+}
+
+export async function getHealth() {
+  if (USE_MOCKS) return mockWrap({ status: 'ok', model_ready: true })
+  return client.get('/health')
+}
+
 export default client
