@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FiArrowRight,
@@ -8,6 +9,7 @@ import {
   FiActivity,
 } from 'react-icons/fi'
 import { mockStocks, marketIndex, aiInsights } from '../data/mockData.js'
+import { getStocks, getMarketIndex } from '../services/api.js'
 import { formatPrice } from '../utils/format.js'
 import ChangePill from '../components/ui/ChangePill.jsx'
 import RatingBadge from '../components/ui/RatingBadge.jsx'
@@ -37,7 +39,28 @@ const FEATURES = [
 ]
 
 export default function Home() {
-  const topThree = [...mockStocks]
+  const [stocks, setStocks] = useState([])
+  const [index, setIndex] = useState(marketIndex)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let alive = true
+    Promise.all([getStocks(), getMarketIndex()])
+      .then(([s, m]) => {
+        if (!alive) return
+        if (s.data && s.data.length) setStocks(s.data)
+        if (m.data && m.data.length) setIndex(m.data)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setLoading(false)
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  const topThree = (stocks.length ? stocks : mockStocks)
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
 
@@ -92,11 +115,17 @@ export default function Home() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-mist">S&P 500 Index</p>
-              <p className="text-2xl font-bold text-white">6,452.08</p>
+              <p className="text-2xl font-bold text-white">
+                {loading
+                  ? '—'
+                  : index.length
+                    ? index[index.length - 1].value.toLocaleString()
+                    : '—'}
+              </p>
             </div>
             <ChangePill value={2.36} />
           </div>
-          <TrendLine data={marketIndex} yKey="value" height={280} />
+          <TrendLine data={index} yKey="value" height={280} />
         </div>
       </section>
 
