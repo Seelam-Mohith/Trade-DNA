@@ -23,9 +23,22 @@ async function mockWrap(payload, ms) {
   return { data: payload }
 }
 
-export async function getStocks() {
+async function withFallback(realCall, fallbackPayload, ms) {
+  try {
+    const res = await realCall()
+    if (res.data && Array.isArray(res.data.data)) {
+      return { data: res.data.data }
+    }
+    return { data: res.data?.data ?? res.data }
+  } catch (err) {
+    console.warn('[api] Backend unavailable, falling back to mock data:', err.message)
+    return mockWrap(fallbackPayload, ms)
+  }
+}
+
+export function getStocks() {
   if (USE_MOCKS) return mockWrap(mockStocks)
-  return client.get('/stocks')
+  return withFallback(() => client.get('/stocks'), mockStocks)
 }
 
 export async function getStockById(id) {
@@ -33,30 +46,30 @@ export async function getStockById(id) {
     await delay()
     return mockWrap(mockStocks.find((s) => s.id === id) || mockStocks[0])
   }
-  return client.get(`/stocks/${id}`)
+  return withFallback(() => client.get(`/stocks/${id}`), mockStocks.find((s) => s.id === id) || mockStocks[0])
 }
 
-export async function getMarketIndex() {
+export function getMarketIndex() {
   if (USE_MOCKS) return mockWrap(marketIndex)
-  return client.get('/market/index')
+  return withFallback(() => client.get('/market/index'), marketIndex)
 }
 
-export async function getRankings() {
+export function getRankings() {
   if (USE_MOCKS) return mockWrap(rankings)
-  return client.get('/rankings')
+  return withFallback(() => client.get('/rankings'), rankings)
 }
 
-export async function getInsights() {
+export function getInsights() {
   if (USE_MOCKS) return mockWrap(aiInsights)
-  return client.get('/insights')
+  return withFallback(() => client.get('/insights'), aiInsights)
 }
 
-export async function getAnalysisWatchlist() {
+export function getAnalysisWatchlist() {
   if (USE_MOCKS) return mockWrap(analysisWatchlist)
-  return client.get('/analysis/watchlist')
+  return withFallback(() => client.get('/analysis/watchlist'), analysisWatchlist)
 }
 
-export async function getStockPrediction(symbol) {
+export function getStockPrediction(symbol) {
   if (USE_MOCKS) {
     const stock = mockStocks.find((s) => s.symbol === symbol) || mockStocks[0]
     return mockWrap({
@@ -74,12 +87,22 @@ export async function getStockPrediction(symbol) {
       fallback: true,
     })
   }
-  return client.get(`/predict/${symbol}`)
+  const stock = mockStocks.find((s) => s.symbol === symbol) || mockStocks[0]
+  return withFallback(() => client.get(`/predict/${symbol}`), {
+    symbol,
+    prediction: stock.rating,
+    confidence: stock.confidence,
+    score: stock.score,
+    signals: stock.signals,
+    probabilities: {},
+    model: 'Mock',
+    fallback: true,
+  })
 }
 
-export async function getHealth() {
+export function getHealth() {
   if (USE_MOCKS) return mockWrap({ status: 'ok', model_ready: true })
-  return client.get('/health')
+  return withFallback(() => client.get('/health'), { status: 'ok', model_ready: true })
 }
 
 export default client
