@@ -3,6 +3,13 @@ dist
 dist-ssr
 *.local
 
+# Python backend
+backend/.venv/
+__pycache__/
+*.pyc
+backend/models/saved/*.pkl
+backend/models/saved/*.joblib
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
