@@ -123,6 +123,15 @@ export default function Analysis() {
     }
   }
 
+  function runModel() {
+    if (!active || refreshing) return
+    setRefreshing(true)
+    getStockPrediction(active.symbol)
+      .then((p) => setPrediction(p.data))
+      .catch(() => {})
+      .finally(() => setRefreshing(false))
+  }
+
   if (loading || !active) return <Loader />
 
   const { signals } = active
@@ -290,10 +299,19 @@ export default function Analysis() {
 
           <button
             type="button"
-            className="inline-flex w-fit items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-gold-bright px-4 py-2 text-sm font-semibold text-ink-950 transition-transform duration-200 hover:scale-[1.03]"
+            onClick={runModel}
+            disabled={refreshing}
+            className="inline-flex w-fit items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-gold-bright px-4 py-2 text-sm font-semibold text-ink-950 transition-transform duration-200 hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-60"
             style={{ boxShadow: '0 0 0 rgba(0,0,0,0)' }}
           >
-            Run Full AI Model
+            {refreshing ? (
+              <>
+                <span className="size-3 animate-spin rounded-full border-2 border-ink-950 border-t-transparent" />
+                Running model…
+              </>
+            ) : (
+              <>Run Full AI Model</>
+            )}
             <FiChevronDown className="hidden" />
           </button>
         </div>
